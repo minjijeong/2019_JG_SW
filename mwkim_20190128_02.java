@@ -1,5 +1,12 @@
 import java.util.Scanner;
 
+/**
+ * <pre>
+ * https://www.acmicpc.net/problem/3190
+ * </pre>
+ * @author 김명우
+ *
+ */
 public class mwkim_20190128_02 {
 	static int N, K, Len, L, second;
 	static int[][] matrix;
@@ -13,53 +20,63 @@ public class mwkim_20190128_02 {
 	// 하 L -> 우, 하 D -> 좌 | 1 -> 0, 1 -> 2
 	// 좌 L -> 하, 좌 D -> 상 | 2 -> 1, 2 -> 3
 	// 상 L -> 좌, 상 D -> 우 | 3 -> 2, 3 -> 0
-	static void moving(int cur_y, int cur_x, int sec, int direction, int state) {
-		second = sec;
-
-		System.out.println(sec + "초: --------------------------------");
-		for(int y = 0; y < N; y++) {
-			for(int x = 0; x < N; x++) {
-				System.out.print(matrix[y][x] + "\t");
+	static void moving() {
+		int cur_y = 1;
+		int cur_x = 1;
+		int state = 0;
+		int direction = 0;
+		
+		while(true) {
+			if(cur_y < 1 || cur_y > N || cur_x < 1 || cur_x > N)
+				break;
+			if(matrix[cur_y][cur_x] == 1)
+				break;
+			if(matrix[cur_y][cur_x] == 2) {
+				Len++;
 			}
-			System.out.println("");
-		}
-
-		if(cur_y < 0 || cur_y >= N || cur_x < 0 || cur_x >= N)
-			return;
-		if(matrix[cur_y][cur_x] == 1)
-			return;
-		if(matrix[cur_y][cur_x] == 2) {
-			Len++;
-		}
-		else {
-			if(Len > 0)
-				matrix[snake[Len - 1][0]][snake[Len - 1][1]] = 0;
-		}
-		int[][] temp = new int[K][2];
-		copy(temp, snake);
-		snake[0][0] = cur_y;
-		snake[0][1] = cur_x;
-		matrix[snake[0][0]][snake[0][1]] = 1;
-		
-		for(int i = 0; i < Len - 1; i++) {
-			snake[i + 1][0] = temp[i][0]; 
-			snake[i + 1][1] = temp[i][1];
-			matrix[snake[i + 1][0]][snake[i + 1][1]] = 1;
-		}
-		
-		int new_d = direction;
-		int new_s = state;
-		if(state <= L - 1) {
-			if(sec == cmd_sec[state]) {
-				new_d = getDirection(direction, cmd[state]);
-				new_s++;
+			else {
+				if(Len > 0)
+					matrix[snake[Len - 1][0]][snake[Len - 1][1]] = 0;
 			}
+			
+			int[][] temp = new int[K + 1][2];
+			copy(temp, snake);
+			snake[0][0] = cur_y;
+			snake[0][1] = cur_x;
+			matrix[snake[0][0]][snake[0][1]] = 1;
+			
+			for(int i = 0; i < Len - 1; i++) {
+				snake[i + 1][0] = temp[i][0]; 
+				snake[i + 1][1] = temp[i][1];
+				matrix[snake[i + 1][0]][snake[i + 1][1]] = 1;
+			}
+			/*
+			System.out.println(second + "초: --------------------------------");
+			for(int y = 1; y <= N; y++) {
+				for(int x = 1; x <= N; x++) {
+					System.out.print(matrix[y][x] + "\t");
+				}
+				System.out.println("");
+			}
+			*/
+			int new_d = direction;
+			int new_s = state;
+			if(state <= L - 1) {
+				if(second == cmd_sec[state]) {
+					new_d = getDirection(direction, cmd[state]);
+					new_s++;
+				}
+			}
+			
+			int head_ny = snake[0][0] + move[new_d][0];
+			int head_nx = snake[0][1] + move[new_d][1];
+			
+			cur_y = head_ny;
+			cur_x = head_nx;
+			state = new_s;
+			direction = new_d;
+			second++;
 		}
-		
-		int head_ny = snake[0][0] + move[new_d][0];
-		int head_nx = snake[0][1] + move[new_d][1];
-		
-		moving(head_ny, head_nx, sec + 1, new_d, new_s);
 	}
 	
 	static void copy(int[][] temp, int[][] origin) {
@@ -122,10 +139,10 @@ public class mwkim_20190128_02 {
 		Len = 1;
 		second = 0;
 
-		matrix = new int[N][N];
+		matrix = new int[N + 1][N + 1];
 		
-		for(int y = 0; y < N; y++) {
-			for(int x = 0; x < N; x++) {
+		for(int y = 1; y <= N; y++) {
+			for(int x = 1; x <= N; x++) {
 				matrix[y][x] = 0;
 			}
 		}
@@ -143,12 +160,11 @@ public class mwkim_20190128_02 {
 			cmd_sec[i] = sc.nextInt();
 			cmd[i] = sc.next();
 		}
-		snake = new int[K][2];
+		snake = new int[K + 1][2];
 		snake[0][0] = 0;
 		snake[0][1] = 0;
-		matrix[0][0] = 1;
 		
-		moving(snake[0][0], snake[0][1], 0, 0, 0);
+		moving();
 		
 		System.out.println(second);
 	}
