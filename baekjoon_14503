@@ -1,0 +1,199 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int N = 0;
+int M = 0;
+int arr[50][50] = { 0, };
+int R = 0;
+int C = 0;
+int D = 0;
+
+
+//북 0  동 1 남 3 서 4
+int main()
+{
+	int i = 0;
+	int j = 0;
+	int cnt = 0;
+	int flag = 0;
+	int result = 0;
+
+	scanf("%d %d", &N, &M);
+	scanf("%d %d %d", &R, &C, &D);
+	for (i = 0; i < N; i++)
+	{
+		for (j = 0; j < M; j++)
+		{
+			scanf("%d", &arr[i][j]);
+			if (i == 0 || i == N - 1 || j == 0 || j == M - 1)
+			{
+				arr[i][j] == 2;
+			}
+		}
+	}
+
+	//for (i = 0; i < N; i++)
+	//{
+	//	for (j = 0; j < M; j++)
+	//	{
+	//		printf("%d ", arr[i][j]);
+	//	}
+	//	printf("\n");
+	//}
+
+	while (1)
+	{
+
+		if (flag != 1)
+		{
+			arr[R][C] = 1; // 현재위치청소
+			//printf("---------------------------------------\n");
+			//for (i = 0; i < N; i++)
+			//{
+			//	for (j = 0; j < M; j++)
+			//	{
+			//		printf("%d ", arr[i][j]);
+			//	}
+			//	printf("\n");
+			//}
+			result++;
+			while (1)
+			{
+				if (cnt != 4)
+				{
+					if (D == 0) // 북
+					{
+						if (arr[R][C - 1] == 0 && C >= 0)
+						{
+							D = 3;
+							C = C - 1;
+							cnt = 0;
+							break;
+						}
+						else if (arr[R][C - 1] != 0 && C >= 0)
+						{
+							D = 3;
+							cnt++;
+							continue;
+						}
+					}
+					else if (D == 1)
+					{
+						if (arr[R - 1][C] == 0 && R >= 0)
+						{
+							D = 0;
+							R = R - 1;
+							cnt = 0;
+							break;
+						}
+						else if (arr[R - 1][C] != 0 && R >= 0)
+						{
+							D = 0;
+							cnt++;
+							continue;
+						}
+					}
+					else if (D == 2)
+					{
+						if (arr[R][C + 1] == 0 && C + 1 < M)
+						{
+							D = 1;
+							C = C + 1;
+							cnt = 0;
+							break;
+						}
+						else if (arr[R][C + 1] != 0 && C + 1 < M)
+						{
+							D = 1;
+							cnt++;
+							continue;
+						}
+					}
+					else if (D == 3)
+					{
+						if (arr[R + 1][C] == 0 && R + 1 < N)
+						{
+							D = 2;
+							R = R + 1;
+							cnt = 0;
+							break;
+						}
+						else if (arr[R + 1][C] != 0 && R + 1 < N)
+						{
+							D = 2;
+							cnt++;
+							continue;
+						}
+					}
+				}
+				else if (cnt == 4)
+				{
+					if (D == 0)
+					{
+						if (R + 1 < N - 1)
+						{
+							R = R + 1;
+							cnt = 0;
+							continue;
+						}
+						else if (R + 1 == N - 1) // 뒤쪽이 벽인경우
+						{
+							flag = 1;
+							break;
+						}
+					}
+					else if (D == 1)
+					{
+						if (C - 1 > 0)
+						{
+							C = C - 1;
+							cnt = 0;
+							continue;
+						}
+						else if (C - 1 == 0) // 뒤쪽이 벽인경우
+						{
+							flag = 1;
+							break;
+						}
+					}
+					else if (D == 2)
+					{
+						if (R - 1 > 0)
+						{
+							R = R - 1;
+							cnt = 0;
+							continue;
+						}
+						else if (R - 1 == 0) // 뒤쪽이 벽인경우
+						{
+							flag = 1;
+							break;
+						}
+					}
+					else if (D == 3)
+					{
+						if (C + 1 < M - 1)
+						{
+							C = C + 1;
+							cnt = 0;
+							continue;
+						}
+						else if (C+1 == M - 1) // 뒤쪽이 벽인경우
+						{
+							flag = 1;
+							break;
+						}
+					}
+				}
+
+			}
+		}
+		else if (flag == 1)
+		{
+			break;
+		}
+	}
+
+	printf("%d", result);
+	//printf("end");
+}
