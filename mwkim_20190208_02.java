@@ -1,5 +1,12 @@
 import java.util.Scanner;
 
+/**
+ * <pre>
+ * https://www.acmicpc.net/problem/14891
+ * </pre>
+ * @author rlaau
+ *
+ */
 public class mwkim_20190208_02 {
 	static int[][] circle, cmd;
 	static int N, score;
