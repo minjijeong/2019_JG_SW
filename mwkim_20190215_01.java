@@ -19,18 +19,18 @@ public class mwkim_20190215_01 {
 	}
 	
 	static void moving(int row, int startCol, int curCol) {
-		if(row == H + 1) {
+		if(row > H) {
 			result[startCol] = curCol;
 			return;
 		}
 		
-		//오른쪽으로 이동
+		//오른쪽으로 이동하면 이동한 위치의 연결선을 지우고 재귀호출
 		if(matrix[row][curCol] == 1) {
 			matrix[row][curCol + 1] = 0;
 			moving(row, startCol, curCol + 1);
 			matrix[row][curCol + 1] = -1;
 		}
-		//왼쪽으로 이동
+		//왼쪽으로 이동하면 이동한 위치의 연결선을 지우고 재귀호출
 		else if(matrix[row][curCol] == -1){
 			matrix[row][curCol - 1] = 0;
 			moving(row, startCol, curCol - 1);
@@ -42,42 +42,39 @@ public class mwkim_20190215_01 {
 		}
 	}
 	
-	static void arrayCopy(int[][] temp, int[][] origin) {
-		for(int y = 1; y <= H; y++) {
-			for(int x = 1; x <= N; x++) {
-				temp[y][x] = origin[y][x];
-			}
-		}
-	}
-	
-	// x = 1이면 맞긴 한데 시간초과
-	// x = cur_x + 2면 예제가 안맞음 나중에 풀어보기
-	static void buildRowLine(int cur_y, int cur_x, int rowLine) {
-		if(checkGames() || rowLine > 3) {
+	static void buildRowLine(int cur_y, int rowLine) {
+		if(checkGames()) {
 
-			/*
-			 * if (rowLine <= 3) { System.out.println(rowLine + "=====================");
-			 * for (int y = 1; y <= H + 1; y++) { System.out.print(y + " "); for (int x = 1;
-			 * x <= N; x++) { System.out.print(matrix[y][x] + "\t"); }
-			 * System.out.println(""); } }
-			 */
+			/*if (rowLine <= 3) {
+				System.out.println(rowLine + "=====================");
+				for (int y = 1; y <= H; y++) {
+					System.out.print(y + " ");
+					for (int x = 1; x <= N; x++) {
+						System.out.print(matrix[y][x] + "\t");
+					}
+					System.out.println("");
+				}
+			}*/
 			
 			needsRow = Math.min(needsRow, rowLine);
 			return;
 		}
-		
-		int[][] tempMatrix = new int[H + 2][N + 1];
+		//rowLine이 3인 경우이므로 이미 재귀호출을 3번함
+		if(rowLine > 2)
+			return;
 		
 		for(int y = cur_y; y <= H; y++) {
 			for(int x = 1; x <= N - 1; x++) {
-				if(matrix[y][x] != 0)
+				//case1: 현재 위치에 연결선이 이미 있을 때
+				//case2: 현재 위치 오른쪽에 연결선이 이미 있을 때
+				if(matrix[y][x] != 0 || matrix[y][x + 1] != 0)
 					continue;
 				
-				arrayCopy(tempMatrix, matrix);
 				matrix[y][x] = 1;
 				matrix[y][x + 1] = -1;
-				buildRowLine(y, x+2, rowLine + 1);
-				arrayCopy(matrix, tempMatrix);
+				buildRowLine(y, rowLine + 1);
+				matrix[y][x] = 0;
+				matrix[y][x + 1] = 0;
 			}
 		}
 	}
@@ -88,8 +85,8 @@ public class mwkim_20190215_01 {
 		N = sc.nextInt();
 		M = sc.nextInt();
 		H = sc.nextInt();
-		needsRow = (N - 1) * H;
-		matrix = new int[H + 2][N + 1];
+		needsRow = Integer.MAX_VALUE;
+		matrix = new int[H + 1][N + 1];
 		result = new int[N + 1];
 		
 		for(int x = 0; x < M; x++) {
@@ -100,7 +97,7 @@ public class mwkim_20190215_01 {
 			matrix[row][col+1] = -1;
 		}
 		
-		buildRowLine(0, 0, 0);
+		buildRowLine(1, 0);
 		
 		System.out.println(needsRow > 3 ? -1 : needsRow);
 	}
