@@ -1,5 +1,12 @@
 import java.util.Scanner;
 
+/**
+ * <pre>
+ * https://www.acmicpc.net/problem/15684
+ * </pre>
+ * @author rlaau
+ *
+ */
 public class mwkim_20190215_01 {
 	static int N, M, H, needsRow;
 	static int[][] matrix;
@@ -63,6 +70,8 @@ public class mwkim_20190215_01 {
 		if(rowLine > 2)
 			return;
 		
+		//x=1부터 시작하는 이유는 x=cur_x+1 했더니 결과가 상이함
+		//모든 케이스를 살펴보지 못해서 그런듯
 		for(int y = cur_y; y <= H; y++) {
 			for(int x = 1; x <= N - 1; x++) {
 				//case1: 현재 위치에 연결선이 이미 있을 때
