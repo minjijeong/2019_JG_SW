@@ -1,0 +1,245 @@
+#include <iostream>
+#include <stdlib.h>
+#include <math.h>
+
+int cnt = 0;
+int N = 0;
+int d_curve[20][4] = { 0, };
+int d_point[101][101] = { 0, };
+int temp_d_point[10201][2] = { 0, };
+int result = 0;
+
+int move[4][2] = { {0,1},{-1,0},{0,-1},{1,0} };
+
+int f_x = 0;
+int f_y = 0;
+
+int t_x = 0;
+int t_y = 0;
+
+int last_x = 0;
+int last_y = 0;
+
+int first_gen(int x, int y, int dir)
+{
+	switch (dir)
+	{
+	case 0: // 동
+		x = x + move[0][1];
+		y = y + move[0][0];
+		break;
+	case 1: // 북
+		x = x + move[1][1];
+		y = y + move[1][0];
+		break;
+	case 2: // 서
+		x = x + move[2][1];
+		y = y + move[2][0];
+		break;
+	case 3: // 남
+		x = x + move[3][1];
+		y = y + move[3][0];
+		break;
+	}
+	f_x = x;
+	f_y = y;
+
+	last_x = f_x;
+	last_y = f_y;
+
+	return 0;
+}
+
+int turn(int x, int y, int p_x, int p_y)
+{
+	int diff_x = 0;
+	int diff_y = 0;
+	int abs_x_distance = 0;
+	int abs_y_distance = 0;
+
+	diff_x = p_x - x;
+	diff_y = p_y - y;
+	
+	abs_x_distance = abs(diff_x);
+	abs_y_distance = abs(diff_y);
+
+	if (diff_x > 0)
+	{
+		if (diff_y < 0)					//   0 0 0
+		{								//   0 x 0
+										//   X 0 0
+			t_x = p_x - abs_y_distance;
+			t_y = p_y - abs_x_distance;
+		}
+		else if (diff_y == 0)			//   0 0 0
+		{								//   X x 0		
+										//   0 0 0		
+			t_x = p_x;
+			t_y = p_y - abs_x_distance;
+		}
+		else if(diff_y > 0)
+		{								//   X 0 0	
+										//   0 x 0	
+										//   0 0 0	
+			t_x = p_x + abs_y_distance;
+			t_y = p_y - abs_x_distance;
+		}													
+
+	}
+	else if (diff_x == 0)
+	{
+		if (diff_y > 0)
+		{								// 0 X 0
+			t_y = p_y;					// 0 x 0
+			t_x = p_x + abs_y_distance; // 0 0 0
+		}
+		else if (diff_y < 0)
+		{								// 0 0 0
+			t_y = p_y;					// 0 x 0
+			t_x = p_x - abs_y_distance; // 0 X 0
+		}
+		else
+		{
+			t_y = p_y;
+			t_x = p_x;
+		}
+			
+	} 
+	else if (diff_x < 0) // 기준 돌릴 점 오른쪽 위치
+	{
+		if (diff_y < 0)
+		{								// 0 0 0
+			t_x = p_x - abs_y_distance;	// 0 x 0
+			t_y = p_y + abs_x_distance;	// 0 0 X
+		}
+		else if (diff_y == 0)
+		{								// 0 0 0
+			t_x = p_x;					// 0 x X
+			t_y = p_y + abs_x_distance;	// 0 0 0
+		}
+		else if (diff_y > 0)
+		{								// 0 0 X
+			t_x = p_x + abs_y_distance;	// 0 x 0
+			t_y = p_y + abs_x_distance;	// 0 0 0
+		}
+	}
+	return 0;
+}
+
+int new_gen(int t_cnt, int temp_d_point[][2])
+{
+	int i = 0;
+	int j = 0;
+	int temp_last_x = 0;
+	int temp_last_y = 0;
+
+	for (i = t_cnt; i >= 0; i--)
+	{
+		turn(temp_d_point[i][0], temp_d_point[i][1], last_x, last_y);
+		if (i == 0)
+		{
+			temp_last_x = t_x;
+			temp_last_y = t_y;
+		}
+		if (last_x == t_x && last_y == t_y)
+		{
+
+		}
+		else
+		{
+			temp_d_point[cnt][0] = t_x;
+			temp_d_point[cnt++][1] = t_y;
+		}
+	}
+
+	last_x = temp_last_x;
+	last_y = temp_last_y;
+
+	return 0;
+}
+
+
+int check_d_point(int t_cnt, int temp_d_point[][2])
+{
+	int i = 0;
+	
+	for (i = 0; i <t_cnt; i++)
+	{
+		d_point[temp_d_point[i][1]][temp_d_point[i][0]] = 1;
+	}
+	return 0;
+}
+
+int check_squre()
+{
+	for (int i = 0; i < 100; i++)
+	{
+		for (int j = 0; j < 100; j++)
+		{
+			if (d_point[i][j] == 1 && d_point[i + 1][j] == 1 && d_point[i][j + 1] == 1 && d_point[i + 1][j + 1] == 1)
+			{
+				result++;
+			}
+		}
+	}
+	return 0;
+}
+
+
+
+int init(int i, int j, int arr[][2])
+{
+	int m = 0;
+	int n = 0;
+
+	for (n = 0; n < i; n++)
+	{
+		for (m = 0; m < j; m++)
+		{
+			arr[n][m] = 0;
+		}
+	}
+	return 0;
+}
+
+int main()
+{
+	int i = 0;
+	int j = 0;
+	int temp_d_curve[100][100] = { 0, };
+
+	scanf("%d", &N);
+
+	for (i = 0; i < N; i++)
+	{
+		scanf("%d %d %d %d", &d_curve[i][0], &d_curve[i][1], &d_curve[i][2], &d_curve[i][3]);
+	}
+
+	
+
+	for (i = 0; i < N; i++)
+	{
+		cnt = 0;
+		init( 10000, 2, temp_d_point);
+		for (j = 0; j < d_curve[i][3] + 1; j++)
+		{
+			if (j == 0)
+			{
+				temp_d_point[cnt][0] = d_curve[i][0];
+				temp_d_point[cnt++][1] = d_curve[i][1]; // 원점 점 찍기
+				
+				first_gen(d_curve[i][0], d_curve[i][1], d_curve[i][2]);
+
+				temp_d_point[cnt][0] = f_x;
+				temp_d_point[cnt++][1] = f_y;
+			}
+			else
+				new_gen(cnt-1, temp_d_point);
+		}
+		check_d_point(cnt, temp_d_point);
+	}
+
+	check_squre();
+
+	printf("%d", result);
+}
