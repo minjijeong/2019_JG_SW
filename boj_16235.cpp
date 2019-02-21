@@ -10,36 +10,36 @@ typedef struct tree {
 }Tree;
 
 int N, M, K;
-int A[11][11]; // S2D2°¡ Ãß°¡ÇÒ ¾çºĞ
-int ground[11][11]; // ÇöÀç ¶¥¿¡ ÀÖ´Â ¾çºĞ
+int A[11][11]; // S2D2ê°€ ì¶”ê°€í•  ì–‘ë¶„
+int ground[11][11]; // í˜„ì¬ ë•…ì— ìˆëŠ” ì–‘ë¶„
 
-// ÁÖº¯ 8°³ ÁÂÇ¥ for¹®À¸·Î µ¹¸®±â À§ÇÑ ¹è¿­
+// ì£¼ë³€ 8ê°œ ì¢Œí‘œ forë¬¸ìœ¼ë¡œ ëŒë¦¬ê¸° ìœ„í•œ ë°°ì—´
 int dx[8] = { -1,-1,-1,0,0,1,1,1 };
 int dy[8] = { -1,0,1,-1,1,-1,0,1 };
 
-vector<Tree> trees; // ÇöÀç »ì¾ÆÀÖ´Â ³ª¹«
-queue<Tree> DeadQ; // Á×Àº ³ª¹«
-queue<Tree> FiveQ; // ³ªÀÌ°¡ 5ÀÇ¹è¼öÀÎ ³ª¹«
-queue<Tree> AliveQ; // »ì¾Æ³²Àº ³ª¹«
-queue<Tree> BirthQ; // »õ·Î »ı°Ü³­ ³ª¹«
+vector<Tree> trees; // í˜„ì¬ ì‚´ì•„ìˆëŠ” ë‚˜ë¬´
+queue<Tree> DeadQ; // ì£½ì€ ë‚˜ë¬´
+queue<Tree> FiveQ; // ë‚˜ì´ê°€ 5ì˜ë°°ìˆ˜ì¸ ë‚˜ë¬´
+queue<Tree> AliveQ; // ì‚´ì•„ë‚¨ì€ ë‚˜ë¬´
+queue<Tree> BirthQ; // ìƒˆë¡œ ìƒê²¨ë‚œ ë‚˜ë¬´
 
-//age ¿À¸§Â÷¼øÀ¸·Î ±¸Á¶Ã¼ Á¤·ÄÀ» À§ÇÑ ÇÔ¼ö
+//age ì˜¤ë¦„ì°¨ìˆœìœ¼ë¡œ êµ¬ì¡°ì²´ ì •ë ¬ì„ ìœ„í•œ í•¨ìˆ˜
 bool comp(const Tree &a, const Tree &b) {
 	return a.age < b.age;
 }
 
 void InitFunc() {
-	// N,M,K ÀÔ·Â
+	// N,M,K ì…ë ¥
 	scanf("%d %d %d", &N, &M, &K);
 
-	// S2D2°¡ Ãß°¡ÇÒ ¾çºĞ ÀÔ·Â
+	// S2D2ê°€ ì¶”ê°€í•  ì–‘ë¶„ ì…ë ¥
 	for (int r = 1; r <= N; r++) {
 		for (int c = 1; c <= N; c++) {
 			scanf("%d", &A[r][c]);
 		}
 	}
 
-	// ³ª¹«ÀÇ ÁÂÇ¥¿Í ³ªÀÌ ÀÔ·Â
+	// ë‚˜ë¬´ì˜ ì¢Œí‘œì™€ ë‚˜ì´ ì…ë ¥
 	for (int i = 0; i < M; i++)
 	{
 		Tree tmp;
@@ -47,7 +47,7 @@ void InitFunc() {
 		trees.push_back(tmp);
 	}
 
-	// ¶¥ÀÇ ¾çºĞÀ» 5·Î ÃÊ±âÈ­
+	// ë•…ì˜ ì–‘ë¶„ì„ 5ë¡œ ì´ˆê¸°í™”
 	for (int i = 1; i <= N; i++) {
 		for (int j = 1; j <= N; j++) {
 			ground[i][j] = 5;
@@ -56,32 +56,32 @@ void InitFunc() {
 }
 
 void SpringFunc() {
-	//³ª¹«°¡ ÀÚ½ÅÀÇ ³ªÀÌ¸¸Å­ ¾çºĞÀ» ¸Ô°í, ³ªÀÌ°¡ 1Áõ°¡ÇÑ´Ù.
+	//ë‚˜ë¬´ê°€ ìì‹ ì˜ ë‚˜ì´ë§Œí¼ ì–‘ë¶„ì„ ë¨¹ê³ , ë‚˜ì´ê°€ 1ì¦ê°€í•œë‹¤.
 	for(int i = 0 ; i<trees.size(); i++)
 	{
 		int x = trees[i].x, y = trees[i].y, age = trees[i].age;
 
-		// ¾çºĞÀÌ ºÎÁ·ÇÑ °æ¿ì Á×´Â´Ù.
+		// ì–‘ë¶„ì´ ë¶€ì¡±í•œ ê²½ìš° ì£½ëŠ”ë‹¤.
 		if (ground[x][y] < age) {
 			DeadQ.push(trees[i]);
 		}
 		else { 
-			// ¾çºĞÀ» ¸Ô°í ³ªÀÌ¸¦ ¸Ô´Â´Ù.
+			// ì–‘ë¶„ì„ ë¨¹ê³  ë‚˜ì´ë¥¼ ë¨¹ëŠ”ë‹¤.
 			ground[x][y] -= age;
 			trees[i].age++;
 			
-			// »ì¾Æ³²Àº ³ª¹« push
+			// ì‚´ì•„ë‚¨ì€ ë‚˜ë¬´ push
 			AliveQ.push(trees[i]);
 
 			if (trees[i].age % 5 == 0)
-				// ³ªÀÌ°¡ 5ÀÇ ¹è¼öÀÎ ³ª¹« push
+				// ë‚˜ì´ê°€ 5ì˜ ë°°ìˆ˜ì¸ ë‚˜ë¬´ push
 				FiveQ.push(trees[i]);
 		}
 	}
 }
 
 void SummerFunc() {
-	//º½¿¡ Á×¾ú´ø ³ª¹«µéÀÌ ¾çºĞÀÌ µÈ´Ù.
+	//ë´„ì— ì£½ì—ˆë˜ ë‚˜ë¬´ë“¤ì´ ì–‘ë¶„ì´ ëœë‹¤.
 	while (!DeadQ.empty())	{
 		Tree tree = DeadQ.front();
 		DeadQ.pop();
@@ -91,7 +91,7 @@ void SummerFunc() {
 }
 
 void AutumnFunc() {
-	//³ªÀÌ°¡ 5ÀÇ ¹è¼öÀÎ ³ª¹«µéÀÌ ¹ø½ÄÇÑ´Ù.
+	//ë‚˜ì´ê°€ 5ì˜ ë°°ìˆ˜ì¸ ë‚˜ë¬´ë“¤ì´ ë²ˆì‹í•œë‹¤.
 	while (!FiveQ.empty()) {
 		Tree tmp = FiveQ.front();
 		int x = tmp.x, y = tmp.y;
@@ -100,7 +100,7 @@ void AutumnFunc() {
 		FiveQ.pop();
 
 		for (int i = 0; i < 8; i++) {
-			// ÁÂÇ¥ ÁÖº¯ 8Ä­¿¡ ³ªÀÌ 1ÀÎ ³ª¹«°¡ Ãß°¡µÈ´Ù.
+			// ì¢Œí‘œ ì£¼ë³€ 8ì¹¸ì— ë‚˜ì´ 1ì¸ ë‚˜ë¬´ê°€ ì¶”ê°€ëœë‹¤.
 			a = x + dx[i];		b = y + dy[i];
 			if (1 <= a && a <= N && 1 <= b && b <= N) {
 				BirthQ.push({a,b,1});
@@ -110,7 +110,7 @@ void AutumnFunc() {
 }
 
 void WinterFunc() {
-	// S2D2°¡ ¾çºĞÀ» Ãß°¡ÇÑ´Ù.
+	// S2D2ê°€ ì–‘ë¶„ì„ ì¶”ê°€í•œë‹¤.
 	for (int r = 1; r <= N; r++) {
 		for (int c = 1; c <= N; c++) {
 			ground[r][c] += A[r][c];
@@ -119,27 +119,27 @@ void WinterFunc() {
 }
 
 int main() {
-	// ÀÔ·Â & ÃÊ±âÈ­
+	// ì…ë ¥ & ì´ˆê¸°í™”
 	InitFunc();
 
-	// ³ªÀÌ°¡ ÀÛÀº ¼øÀ¸·Î Á¤·Ä
+	// ë‚˜ì´ê°€ ì‘ì€ ìˆœìœ¼ë¡œ ì •ë ¬
 	sort(trees.begin(), trees.end(), comp);
 
 	while (K--)
 	{
-		// º½
+		// ë´„
 		SpringFunc();
-		// ¿©¸§
+		// ì—¬ë¦„
 		SummerFunc();
-		// °¡À»
+		// ê°€ì„
 		AutumnFunc();
-		// °Ü¿ï
+		// ê²¨ìš¸
 		WinterFunc();
 
-		// treesº¤ÅÍ¸¦ ºñ¿î´Ù.
+		// treesë²¡í„°ë¥¼ ë¹„ìš´ë‹¤.
 		trees.clear();
 
-		// »ı°Ü³­ ³ª¹«¿Í »ì¾Æ³²Àº ³ª¹«¸¦ push
+		// ìƒê²¨ë‚œ ë‚˜ë¬´ì™€ ì‚´ì•„ë‚¨ì€ ë‚˜ë¬´ë¥¼ push
 		while (!BirthQ.empty()) {
 			trees.push_back(BirthQ.front());
 			BirthQ.pop();
@@ -151,7 +151,7 @@ int main() {
 		}
 	}
 
-	// ÇöÀç »ì¾ÆÀÖ´Â ³ª¹«ÀÇ °³¼ö Ãâ·Â
+	// í˜„ì¬ ì‚´ì•„ìˆëŠ” ë‚˜ë¬´ì˜ ê°œìˆ˜ ì¶œë ¥
 	cout << trees.size();
 
 	return 0;
