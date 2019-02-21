@@ -36,9 +36,9 @@ void DFS(pair<int, int> v)	{
 		x = v.first;
 		y = v.second;
 		
-		// 상, 하, 좌, 우 좌표
 		r = x + dy[i];	
 		c = y + dx[i]; 
+
 		if (!(0 <= r && 0 <= c && r < N && c < N))
 			continue;
 
@@ -46,7 +46,6 @@ void DFS(pair<int, int> v)	{
 		sub = A[x][y] - A[r][c];
 		if (sub < 0) sub = -sub;
 
-		// 경계선이 없고 해당 나라를 아직 방문하지 않은 경우
 		if ((L <= sub && sub <= R) && (visited[r][c] == false)) {
 			DFS(make_pair(r, c));
 		}
