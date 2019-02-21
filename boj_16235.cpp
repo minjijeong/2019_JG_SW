@@ -40,8 +40,7 @@ void InitFunc() {
 	}
 
 	// 나무의 좌표와 나이 입력
-	for (int i = 0; i < M; i++)
-	{
+	for (int i = 0; i < M; i++) {
 		Tree tmp;
 		scanf("%d %d %d", &tmp.x, &tmp.y, &tmp.age);
 		trees.push_back(tmp);
