@@ -6,19 +6,24 @@ using namespace std;
 
 int N, x, y;
 int map[25][25];
+
+//아기상어의 사이즈, 먹은 물고기 수, 걸리는 시간
 int sz, eat, answer;
 
+// 상,하,좌,우를 for문으로 탐색하기 위한 배열
 int dx[4] = {-1,0,0,1};
 int dy[4] = {0,-1,1,0};
 
-bool visited[25][25];
 bool eatable[25][25];
 bool passable[25][25];
 
 int dist[25][25];
 int minDist;
 
+//좌표
 pair<int, int> p_min, p;
+
+//좌표와 나이를 저장하기 위한 이중 pair
 queue<pair<pair<int, int>,int>> Q;
 pair<pair<int, int>, int> v;
 
@@ -44,6 +49,7 @@ void InitFunc() {
 // 거리 구하기
 void getDist(int x, int y, int d) {
 
+	//BFS는 push 전에 방문 체크를 해주어야 함
 	passable[x][y] = false;
 	Q.push(make_pair(make_pair(x, y), d));
 
@@ -58,6 +64,7 @@ void getDist(int x, int y, int d) {
 
 		Q.pop();
 
+		//먹을 수 있는 물고기까지의 최소 거리를 구해서 저장
 		if (eatable[x][y] == true && d < dist[x][y]) {
 			dist[x][y] = d;
 			if (d < minDist)
@@ -108,11 +115,14 @@ void go() {
 		eat = 0;
 	}
 
+	//걸리는 시간 == 이동 거리
 	answer += dist[a][b];
 
 	// 다음 반복을 위한 초기화 작업
 	map[a][b] = 0;
 	eatable[a][b] = false;
+
+	//좌표 이동
 	x = a;
 	y = b;
 }
