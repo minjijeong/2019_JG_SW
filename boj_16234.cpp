@@ -27,7 +27,6 @@ void DFS(int x, int y) {
 	sum += A[x][y];
 	q.push(make_pair(x, y));
 
-	//이동 가능한 좌표가 있으면 w에 저장 후, 현재 좌표를 스택에 push한다.
 	for (int i = 0; i < 4; i++)
 	{
 		r = x + dy[i];
@@ -83,10 +82,9 @@ int main() {
 
 						A[x][y] = val;
 						q.pop();
-
-						//연합 개수 카운트
-						groupNum++;
 					}
+					//연합 개수 카운트
+					groupNum++;
 				}
 				else if (num == 1) {
 					// 하나만 방문한 경우 다시 초기화 해야 한다.
