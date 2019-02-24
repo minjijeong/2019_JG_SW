@@ -1,4 +1,6 @@
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
 
 /**
  * sw expert arcademy 2115
@@ -8,7 +10,7 @@ import java.util.Scanner;
 public class mwkim_20190225_01 {
 	static int N, M, C, maxA, maxB, max_result;
 	static int[][] matrix;
-	static int[] A, B;
+	static int[][] worker;
 	
 	//A 또는 B 일꾼이 채취한 벌꿀들 중 어떤 것을 선택할지를 combination으로 결정
 	//제곱의 최대값을 maxA 또는 maxB에 삽입
@@ -38,75 +40,61 @@ public class mwkim_20190225_01 {
 		}
 	}
 	
-	//전체 벌꿀 매트릭스 중 A가 M만큼 선택하고 B가 M만큼 선택하도록 재귀로 실행
-	static void getHoney(boolean A_C, boolean B_C, int cur_y, int cur_x) {
-		if(A_C && B_C) {
+	//전체 벌꿀 매트릭스 중 A가 M만큼 선택하고 B가 M만큼 선택하도록 재귀로 실행	
+	static void getHoney(int complete, int cur_y, int cur_x) {
+		if(complete == 2) {
 			int[] arr = new int[M];
 			maxA = 0;
 			maxB = 0;
 			for(int i = 1; i <= M; i++) {
-				select(A, arr, 0, M, i, 0, true);
-				select(B, arr, 0, M, i, 0, false);
+				select(worker[0], arr, 0, M, i, 0, true);
+				select(worker[1], arr, 0, M, i, 0, false);
 			}
 			int result = maxA + maxB;
 			max_result = Math.max(max_result, result);
 			//System.out.println("A: " + maxA + " | B: " + maxB);
+			return;
 		}
 		
 		if(cur_y >= N) {
 			return;
 		}
 		
-		if(!A_C) {
-			int new_x = cur_x + (M - 1);
-			if(new_x >= N) {
-				getHoney(A_C, B_C, cur_y + 1, 0);
-				return;
-			}
-			int num = 0;
-			for(int x = cur_x; x <= new_x; x++) {
-				A[num] = matrix[cur_y][x];
-				num++;
-			}
-			getHoney(true, B_C, cur_y, new_x + 1);
-			getHoney(A_C, B_C, cur_y, cur_x + 1);
+		int new_x = cur_x + (M - 1);
+		if(new_x >= N) {
+			getHoney(complete, cur_y + 1, 0);
+			return;
 		}
-		else if(A_C && !B_C){
-			int new_x = cur_x + (M - 1);
-			if(new_x >= N) {
-				getHoney(A_C, B_C, cur_y + 1, 0);
-				return;
-			}
-			int num = 0;
-			for(int x = cur_x; x <= new_x; x++) {
-				B[num] = matrix[cur_y][x];
-				num++;
-			}
-			getHoney(A_C, true, cur_y, new_x + 1);
-			getHoney(A_C, B_C, cur_y, cur_x + 1);
+		int num = 0;
+		for(int x = cur_x; x <= new_x; x++) {
+			worker[complete][num] = matrix[cur_y][x];
+			num++;
 		}
+		getHoney(complete + 1, cur_y, new_x + 1);
+		getHoney(complete, cur_y, cur_x + 1);
 	}
 	
-	public static void main(String[] args) {
-		Scanner sc = new Scanner(System.in);
+	public static void main(String[] args) throws Exception {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		
-		int testCase = sc.nextInt();
+		int testCase = Integer.parseInt(br.readLine());
 		
 		for(int test = 1; test <= testCase; test++) {
+			StringTokenizer st = new StringTokenizer(br.readLine());
 			max_result = 0;
-			N = sc.nextInt();
-			M = sc.nextInt();
-			C = sc.nextInt();
+			N = Integer.parseInt(st.nextToken());
+			M = Integer.parseInt(st.nextToken());
+			C = Integer.parseInt(st.nextToken());
 			matrix = new int[N][N];
-			A = new int[M];
-			B = new int[M];
+			worker = new int[2][M];
 			
 			for(int y = 0; y < N; y++) {
+				st = new StringTokenizer(br.readLine());
 				for(int x = 0; x < N; x++) {
-					matrix[y][x] = sc.nextInt();
+					matrix[y][x] = Integer.parseInt(st.nextToken());
 				}
 			}
-			getHoney(false, false, 0, 0);
+			getHoney(0, 0, 0);
 			System.out.println("#" + test + " " + max_result);
 		}
 	}
