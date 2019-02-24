@@ -9,58 +9,25 @@ import java.util.Scanner;
  * <pre>
  */
 public class mwkim_20190222_02 {
-	static int N, result, fish_num;
+	static int N, result;
 	static int[][] matrix;
 	static int[][] move = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}}; //북동남서
-	static boolean[][] visit;
-	static int[][] fishes;
 	
 	static void moving(int[] cur_shark) {
 		Queue<int[]> queue = new LinkedList<int[]>();
 		queue.add(cur_shark);
-		int loop = 0;
 		while(!queue.isEmpty()) {
 			int[] cur = queue.poll();
-			fish_num = 0;
-			fishes = new int[N][N];
-			visit = new boolean[N][N];
-			searchFish(cur);
+			int[] fish = searchFish(cur);
 			
-			//System.out.println(loop + " - [" + cur[0] + "][" + cur[1] + "]: " + cur[2] + ", " + cur[3] + " | " + result + ": " + fish_num);
-			if(fish_num == 0)
+			//먹을 수 있는 물고기가 없을 때
+ 			if(fish[0] == cur[0] && fish[1] == cur[1])
 				break;
 			else {
-				int min_distance = Integer.MAX_VALUE;
 				int[] next = new int[4];
-				next[0] = Integer.MAX_VALUE;
-				next[1] = Integer.MAX_VALUE;
-				
-				for(int y = 0; y < N; y++) {
-					for(int x = 0; x < N; x++) {
-						if(fishes[y][x] == 0)
-							continue;
-						
-						if(fishes[y][x] < min_distance) {	
-							next[0] = y;
-							next[1] = x;
-							min_distance = fishes[y][x];
-						}
-						else if(fishes[y][x] == min_distance) {
-							if(y < next[0]) {
-								next[0] = y;
-								next[1] = x;
-								min_distance = fishes[y][x];
-							}
-							else if(y == next[0]) {
-								if(x < next[1]) {
-									next[0] = y;
-									next[1] = x;
-									min_distance = fishes[y][x];
-								}
-							}
-						}
-					}
-				}
+				next[0] = fish[0];
+				next[1] = fish[1];
+
 				matrix[next[0]][next[1]] = 0;
 				cur[3]++;
 				if(cur[3] == cur[2]) {
@@ -69,18 +36,19 @@ public class mwkim_20190222_02 {
 				}
 				next[2] = cur[2];
 				next[3] = cur[3];
-				result += min_distance;
+				result += fish[2];
 				queue.add(next);
-				loop++;
 			}
 		}
 		
 		System.out.println(result);
 	}
 	
-	static void searchFish(int[] current) {	
+	static int[] searchFish(int[] current) {	
 		Queue<int[]> node = new LinkedList<int[]>();
 		int[] temp = new int[3];
+		int min_distance = Integer.MAX_VALUE;
+		boolean[][] visit = new boolean[N][N];
 		temp[0] = current[0];
 		temp[1] = current[1];
 		temp[2] = 0;
@@ -88,15 +56,32 @@ public class mwkim_20190222_02 {
 		
 		while(!node.isEmpty()) {
 			int[] cur = node.poll();
+			//먹을 수 있는 물고기
 			if(matrix[cur[0]][cur[1]] < current[2] && matrix[cur[0]][cur[1]] > 0) {
-				if(fishes[cur[0]][cur[1]] == 0) {
-					fishes[cur[0]][cur[1]] = cur[2];
-					fish_num++;
+				//최단 거리인 물고기면 갱신
+				if(min_distance > cur[2]) {
+					temp[0] = cur[0];
+					temp[1] = cur[1];
+					temp[2] = cur[2];
+					min_distance = cur[2];
 				}
-				else
-					fishes[cur[0]][cur[1]] = Math.min(fishes[cur[0]][cur[1]], cur[2]);
+				else if(min_distance == cur[2]) {
+					//거리는 같은데 새로운 좌표가 y값이 더 작을 때
+					if(temp[0] > cur[0]) {
+						temp[0] = cur[0];
+						temp[1] = cur[1];
+						temp[2] = cur[2];
+					}
+					//거리 같고 y좌표도 같다면 x좌표 낮은 걸 보기
+					else if(temp[0] == cur[0]) {
+						if(temp[1] > cur[1]) {
+							temp[0] = cur[0];
+							temp[1] = cur[1];
+							temp[2] = cur[2];
+						}
+					}
+				}
 			}
-			
 			for(int i = 0; i < 4; i++) {
 				int[] next = new int[3];
 				next[0] = cur[0] + move[i][0];
@@ -116,6 +101,7 @@ public class mwkim_20190222_02 {
 				node.add(next);
 			}
 		}
+		return temp;
 	}
 	
 	public static void main(String[] args) {
